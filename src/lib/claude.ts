@@ -1,6 +1,6 @@
 const PROXY_URL = 'https://reading-companion-proxy-production.up.railway.app/api/claude';
 
-async function callClaude(prompt, systemPrompt) {
+async function callClaude(prompt: string, systemPrompt?: string): Promise<string> {
   const response = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -16,12 +16,24 @@ async function callClaude(prompt, systemPrompt) {
   return data.content[0].text;
 }
 
-export async function generatePreReadBriefing(params) {
-  const systemPrompt = `You are an expert reading coach. Create a pre-read briefing. Always respond with valid JSON.`;
+export async function generatePreReadBriefing(params: {
+  chapterText: string;
+  bookTitle: string;
+  bookAuthor?: string;
+  domain?: string;
+  userGoal?: string;
+  goalType?: string;
+}): Promise<{
+  overview: string;
+  concepts: Array<{ term: string; definition: string; importance: string }>;
+  questions: string[];
+  structure: string;
+}> {
+  const systemPrompt = 'You are an expert reading coach. Create a pre-read briefing. Always respond with valid JSON.';
   const prompt = `Analyze this chapter and create a pre-read briefing.
-Book: ${params.bookTitle}${params.bookAuthor ? ` by ${params.bookAuthor}` : ''}
-${params.domain ? `Domain: ${params.domain}` : ''}
-${params.userGoal ? `Reader's Goal: ${params.userGoal}` : ''}
+Book: ${params.bookTitle}${params.bookAuthor ? ' by ' + params.bookAuthor : ''}
+${params.domain ? 'Domain: ' + params.domain : ''}
+${params.userGoal ? 'Reader Goal: ' + params.userGoal : ''}
 Chapter Text:
 ${params.chapterText.substring(0, 15000)}
 
@@ -38,13 +50,28 @@ Respond ONLY with valid JSON.`;
   return JSON.parse(cleaned);
 }
 
-export async function generatePostReadExtraction(params) {
-  const systemPrompt = `You are an expert reading coach. Extract key knowledge. Always respond with valid JSON.`;
+export async function generatePostReadExtraction(params: {
+  chapterText: string;
+  bookTitle: string;
+  bookAuthor?: string;
+  domain?: string;
+  userGoal?: string;
+  goalType?: string;
+  preReadQuestions?: string[];
+}): Promise<{
+  summary: string;
+  concepts: Array<{ name: string; explanation: string; connections: string[] }>;
+  claims: Array<{ claim: string; evidence: string; significance: string }>;
+  answers: Array<{ question: string; answer: string }>;
+  openQuestions: string[];
+  cards: Array<{ front: string; back: string; type: string; difficulty: string }>;
+}> {
+  const systemPrompt = 'You are an expert reading coach. Extract key knowledge. Always respond with valid JSON.';
   const prompt = `Analyze this chapter and extract key knowledge.
-Book: ${params.bookTitle}${params.bookAuthor ? ` by ${params.bookAuthor}` : ''}
-${params.domain ? `Domain: ${params.domain}` : ''}
-${params.userGoal ? `Reader's Goal: ${params.userGoal}` : ''}
-${params.preReadQuestions?.length ? `Pre-read questions: ${params.preReadQuestions.join('; ')}` : ''}
+Book: ${params.bookTitle}${params.bookAuthor ? ' by ' + params.bookAuthor : ''}
+${params.domain ? 'Domain: ' + params.domain : ''}
+${params.userGoal ? 'Reader Goal: ' + params.userGoal : ''}
+${params.preReadQuestions?.length ? 'Pre-read questions: ' + params.preReadQuestions.join('; ') : ''}
 Chapter Text:
 ${params.chapterText.substring(0, 15000)}
 
