@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
 const SUPABASE_URL = 'https://biafwoobalkjofdbfagl.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZ3b29iYWxram9mZGJmYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzNTQ3MTUsImV4cCI6MjA4MTkzMDcxNX0.LIxGen3VwminhEVJnf9rydMbgEMFR31iqqRuHHWxQoc';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZ3b29iYWxram9mZGJmYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4MjkwMzMsImV4cCI6MjA1MDQwNTAzM30.L-KOHNhIVOKsAlSdtN9j4zqngGI4XZh2LCgOW63cR3I';
 
 const createStorageAdapter = () => {
   if (Platform.OS === 'web') {
@@ -42,125 +42,84 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 
 export async function signInWithMagicLink(email: string) {
   let redirectUrl = 'readingcompanion://auth/callback';
-  
+
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
     redirectUrl = window.location.origin;
   }
-    
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: {
-      emailRedirectTo: redirectUrl,
-    },
+    options: { emailRedirectTo: redirectUrl },
   });
+
   return { error };
 }
 
-export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  return { error };
-}
+export type Profile = {
+  id: string;
+  email: string;
+  created_at: string;
+  settings: Record<string, any>;
+};
 
-export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
-}
-
-export interface Book {
+export type Book = {
   id: string;
   user_id: string;
   title: string;
   author: string | null;
   domain: string | null;
-  cover_url: string | null;
   user_goal: string | null;
-  goal_type: 'enjoyment' | 'research' | 'skill_acquisition' | 'general_learning' | null;
-  progress_percent: number;
+  goal_type: string | null;
   status: 'reading' | 'completed' | 'paused';
+  progress_percent: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface Chapter {
+export type Chapter = {
   id: string;
   book_id: string;
-  user_id: string;
   title: string;
-  chapter_number: number | null;
+  chapter_number: number;
   source_text: string | null;
-  source_type: 'paste' | 'file' | 'url' | null;
-  source_url: string | null;
-  word_count: number | null;
   preread_complete: boolean;
   reading_complete: boolean;
   postread_complete: boolean;
   created_at: string;
-  updated_at: string;
-}
+};
 
-export interface PreReadResult {
+export type PreReadResult = {
   id: string;
   chapter_id: string;
-  user_id: string;
-  chapter_overview: string | null;
-  key_concepts: Array<{
-    term: string;
-    preview: string;
-    watch_for: string;
-  }>;
+  chapter_overview: string;
+  key_concepts: Array<{ term: string; definition: string; importance: string }>;
   questions_to_hold: string[];
-  structure_map: string | null;
-  connections: string | null;
+  structure_overview: string;
   created_at: string;
-}
+};
 
-export interface PostReadResult {
+export type PostReadResult = {
   id: string;
   chapter_id: string;
-  user_id: string;
-  chapter_summary: string | null;
-  core_concepts: Array<{
-    name: string;
-    definition: string;
-    significance: string;
-    example: string | null;
-  }>;
-  key_claims: Array<{
-    claim: string;
-    evidence: string;
-    implications: string;
-  }>;
+  chapter_summary: string;
+  core_concepts: Array<{ name: string; explanation: string; connections: string[] }>;
+  key_claims: Array<{ claim: string; evidence: string; significance: string }>;
+  question_answers: Array<{ question: string; answer: string }>;
   open_questions: string[];
-  connections: string | null;
-  reader_notes: string | null;
   created_at: string;
-}
+};
 
-export interface Card {
+export type Card = {
   id: string;
   chapter_id: string;
-  book_id: string;
-  user_id: string;
   front: string;
   back: string;
-  card_type: 'basic' | 'conceptual' | 'application' | 'syntopical';
+  card_type: 'concept' | 'fact' | 'relationship' | 'application';
   difficulty: 'easy' | 'medium' | 'hard';
   tags: string[];
-  ease_factor: number;
+  easiness_factor: number;
   interval_days: number;
   repetitions: number;
-  next_review_date: string;
-  last_review_date: string | null;
-  is_active: boolean;
-  is_approved: boolean;
+  next_review_at: string;
   created_at: string;
-  updated_at: string;
-}
-
-export interface StudyStats {
-  total_cards: number;
-  due_today: number;
-  reviewed_today: number;
-  total_books: number;
-  streak_days: number;
-}
+};
