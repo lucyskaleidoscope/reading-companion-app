@@ -16,7 +16,7 @@ async function callClaude(prompt: string, systemPrompt?: string): Promise<string
   return data.content[0].text;
 }
 
-export async function generatePreReadBriefing(params: {
+export async function generatePreRead(params: {
   chapterText: string;
   bookTitle: string;
   bookAuthor?: string;
@@ -50,7 +50,7 @@ Respond ONLY with valid JSON.`;
   return JSON.parse(cleaned);
 }
 
-export async function generatePostReadExtraction(params: {
+export async function generatePostRead(params: {
   chapterText: string;
   bookTitle: string;
   bookAuthor?: string;
