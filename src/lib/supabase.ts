@@ -5,35 +5,24 @@ import { Platform } from 'react-native';
 const SUPABASE_URL = 'https://biafwoobalkjofdbfagl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZ3b29iYWxram9mZGJmYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4MjkwMzMsImV4cCI6MjA1MDQwNTAzM30.L-KOHNhIVOKsAlSdtN9j4zqngGI4XZh2LCgOW63cR3I';
 
-const createStorageAdapter = () => {
-  if (Platform.OS === 'web') {
-    return {
-      getItem: (key: string) => {
-        const value = localStorage.getItem(key);
-        return Promise.resolve(value);
-      },
-      setItem: (key: string, value: string) => {
-        localStorage.setItem(key, value);
-        return Promise.resolve();
-      },
-      removeItem: (key: string) => {
-        localStorage.removeItem(key);
-        return Promise.resolve();
-      },
-    };
-  } else {
-    const SecureStore = require('expo-secure-store');
-    return {
-      getItem: (key: string) => SecureStore.getItemAsync(key),
-      setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
-      removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-    };
-  }
+const webStorage = {
+  getItem: (key: string) => {
+    const value = localStorage.getItem(key);
+    return Promise.resolve(value);
+  },
+  setItem: (key: string, value: string) => {
+    localStorage.setItem(key, value);
+    return Promise.resolve();
+  },
+  removeItem: (key: string) => {
+    localStorage.removeItem(key);
+    return Promise.resolve();
+  },
 };
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: createStorageAdapter(),
+    storage: webStorage,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
@@ -122,4 +111,11 @@ export type Card = {
   repetitions: number;
   next_review_at: string;
   created_at: string;
+};
+
+export type StudyStats = {
+  due_today: number;
+  reviewed_today: number;
+  total_cards: number;
+  streak_days: number;
 };
