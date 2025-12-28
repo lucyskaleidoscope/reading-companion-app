@@ -1,21 +1,27 @@
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
-import { Platform } from 'react-native';
 
 const SUPABASE_URL = 'https://biafwoobalkjofdbfagl.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZ3b29iYWxram9mZGJmYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4MjkwMzMsImV4cCI6MjA1MDQwNTAzM30.L-KOHNhIVOKsAlSdtN9j4zqngGI4XZh2LCgOW63cR3I';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZ3b29iYWxram9mZGJmYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzNTQ3MTUsImV4cCI6MjA4MTkzMDcxNX0.LIxGen3VwminhEVJnf9rydMbgEMFR31iqqRuHHWxQoc';
 
 const webStorage = {
   getItem: (key: string) => {
-    const value = localStorage.getItem(key);
-    return Promise.resolve(value);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const value = localStorage.getItem(key);
+      return Promise.resolve(value);
+    }
+    return Promise.resolve(null);
   },
   setItem: (key: string, value: string) => {
-    localStorage.setItem(key, value);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(key, value);
+    }
     return Promise.resolve();
   },
   removeItem: (key: string) => {
-    localStorage.removeItem(key);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(key);
+    }
     return Promise.resolve();
   },
 };
@@ -30,15 +36,16 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 export async function signInWithMagicLink(email: string) {
-  let redirectUrl = 'readingcompanion://auth/callback';
-
-  if (Platform.OS === 'web' && typeof window !== 'undefined') {
-    redirectUrl = window.location.origin;
-  }
-
+  // Use the current origin for redirect, or fallback to localhost for dev
+  const redirectUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : 'http://localhost:8081';
+  
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: redirectUrl },
+    options: { 
+      emailRedirectTo: redirectUrl
+    },
   });
 
   return { error };
