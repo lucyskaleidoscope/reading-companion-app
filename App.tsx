@@ -1,10 +1,11 @@
-import React, { useEffect, useState, Component, ErrorInfo, ReactNode } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import * as Linking from 'expo-linking';
 
 import { supabase } from './src/lib/supabase';
 import { useStore } from './src/store/useStore';
@@ -20,47 +21,6 @@ import PreReadScreen from './src/screens/PreReadScreen';
 import PostReadScreen from './src/screens/PostReadScreen';
 import PreReadResultScreen from './src/screens/PreReadResultScreen';
 import PostReadResultScreen from './src/screens/PostReadResultScreen';
-
-// Error Boundary for catching render errors
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-}
-
-class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
-  constructor(props: { children: ReactNode }) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('App Error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <View style={errorStyles.container}>
-          <Text style={errorStyles.title}>Something went wrong</Text>
-          <Text style={errorStyles.message}>{this.state.error?.message}</Text>
-          <Text style={errorStyles.hint}>Try refreshing the page</Text>
-        </View>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-const errorStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d0d0d', justifyContent: 'center', alignItems: 'center', padding: 20 },
-  title: { fontSize: 24, fontWeight: '600', color: '#fff', marginBottom: 12 },
-  message: { fontSize: 14, color: '#f66', textAlign: 'center', marginBottom: 20 },
-  hint: { fontSize: 14, color: '#888' },
-});
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -106,11 +66,7 @@ const LibraryStack = createNativeStackNavigator<LibraryStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const linking = {
-  prefixes: [
-    'http://localhost:8081',
-    'https://reading-companion-web.vercel.app',
-    'readingcompanion://',
-  ],
+  prefixes: [Linking.createURL('/'), 'readingcompanion://', 'http://localhost:8081'],
   config: {
     screens: {
       Auth: 'auth/callback',
@@ -349,32 +305,28 @@ export default function App() {
 
   if (initializing || isLoading) {
     return (
-      <ErrorBoundary>
-        <View style={{ flex: 1, backgroundColor: '#0d0d0d', justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#4a9eff" />
-        </View>
-      </ErrorBoundary>
+      <View style={{ flex: 1, backgroundColor: '#0d0d0d', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#4a9eff" />
+      </View>
     );
   }
 
   return (
-    <ErrorBoundary>
-      <NavigationContainer linking={linking}>
-        <StatusBar style="light" />
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          {!user ? (
-            <RootStack.Screen
-              name="Auth"
-              component={AuthScreen}
-            />
-          ) : (
-            <RootStack.Screen
-              name="Main"
-              component={TabNavigator}
-            />
-          )}
-        </RootStack.Navigator>
-      </NavigationContainer>
-    </ErrorBoundary>
+    <NavigationContainer linking={linking}>
+      <StatusBar style="light" />
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        {!user ? (
+          <RootStack.Screen
+            name="Auth"
+            component={AuthScreen}
+          />
+        ) : (
+          <RootStack.Screen
+            name="Main"
+            component={TabNavigator}
+          />
+        )}
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 }
