@@ -7,22 +7,19 @@ import {
   StyleSheet,
   TextInput,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useStore } from '../store/useStore';
-import { supabase, Chapter, PreReadResult } from '../lib/supabase';
+import { supabase, Chapter } from '../lib/supabase';
 import { generatePreRead } from '../lib/claude';
 import { RootStackParamList } from '../../App';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type RouteType = RouteProp<RootStackParamList, 'PreRead'>;
 
-type InputMode = 'paste' | 'file' | 'url';
+type InputMode = 'paste' | 'url';
 
 export default function PreReadScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -35,7 +32,6 @@ export default function PreReadScreen() {
   const [text, setText] = useState('');
   const [url, setUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [fileName, setFileName] = useState('');
 
   useEffect(() => {
     loadChapter();
@@ -56,33 +52,9 @@ export default function PreReadScreen() {
     }
   };
 
-  const handleFilePick = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ['text/plain', 'application/pdf'],
-        copyToCacheDirectory: true,
-      });
-
-      if (result.canceled) return;
-
-      const file = result.assets[0];
-      setFileName(file.name);
-
-      if (file.mimeType === 'text/plain') {
-        const content = await FileSystem.readAsStringAsync(file.uri);
-        setText(content);
-      } else {
-        // For PDF, we'd need a PDF parser library
-        Alert.alert('PDF Support', 'PDF parsing coming soon. Please paste text for now.');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to read file');
-    }
-  };
-
   const handleProcess = async () => {
     if (!text.trim() || !currentBook || !chapter) {
-      Alert.alert('Error', 'Please provide chapter text');
+      window.alert('Please provide chapter text');
       return;
     }
 
@@ -107,7 +79,7 @@ export default function PreReadScreen() {
       });
 
       // Save pre-read results
-      const { data: preReadData, error } = await supabase
+      const { error } = await supabase
         .from('preread_results')
         .insert({
           chapter_id: chapterId,
@@ -129,7 +101,7 @@ export default function PreReadScreen() {
       navigation.navigate('PreReadResult', { chapterId });
     } catch (error) {
       console.error('Pre-read error:', error);
-      Alert.alert('Error', 'Failed to generate pre-read briefing');
+      window.alert('Failed to generate pre-read briefing');
     } finally {
       setIsProcessing(false);
     }
@@ -171,19 +143,6 @@ export default function PreReadScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, inputMode === 'file' && styles.tabActive]}
-            onPress={() => setInputMode('file')}
-          >
-            <Ionicons 
-              name="document-outline" 
-              size={18} 
-              color={inputMode === 'file' ? '#fff' : '#888'} 
-            />
-            <Text style={[styles.tabText, inputMode === 'file' && styles.tabTextActive]}>
-              Upload
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             style={[styles.tab, inputMode === 'url' && styles.tabActive]}
             onPress={() => setInputMode('url')}
           >
@@ -214,27 +173,6 @@ export default function PreReadScreen() {
             <Text style={styles.charCount}>
               {text.length.toLocaleString()} characters
             </Text>
-          </View>
-        )}
-
-        {/* File Input */}
-        {inputMode === 'file' && (
-          <View style={styles.inputSection}>
-            <TouchableOpacity style={styles.fileUpload} onPress={handleFilePick}>
-              <Ionicons name="cloud-upload-outline" size={40} color="#4a9eff" />
-              <Text style={styles.fileUploadText}>
-                {fileName || 'Tap to select a file'}
-              </Text>
-              <Text style={styles.fileUploadHint}>Supports TXT files</Text>
-            </TouchableOpacity>
-            {text && (
-              <View style={styles.previewBox}>
-                <Text style={styles.previewLabel}>Preview</Text>
-                <Text style={styles.previewText} numberOfLines={5}>
-                  {text.substring(0, 500)}...
-                </Text>
-              </View>
-            )}
           </View>
         )}
 
@@ -392,42 +330,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666',
     marginTop: 8,
-  },
-  fileUpload: {
-    backgroundColor: '#1a1a1a',
-    borderWidth: 2,
-    borderColor: '#333',
-    borderStyle: 'dashed',
-    borderRadius: 12,
-    padding: 40,
-    alignItems: 'center',
-  },
-  fileUploadText: {
-    fontSize: 16,
-    color: '#888',
-    marginTop: 12,
-  },
-  fileUploadHint: {
-    fontSize: 13,
-    color: '#666',
-    marginTop: 4,
-  },
-  previewBox: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-  },
-  previewLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#888',
-    marginBottom: 8,
-  },
-  previewText: {
-    fontSize: 14,
-    color: '#999',
-    lineHeight: 20,
   },
   footer: {
     padding: 20,
