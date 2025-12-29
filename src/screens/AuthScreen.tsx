@@ -112,7 +112,7 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Tech-Education Theme
+  // Greek Education Theme
   container: {
     flex: 1,
     backgroundColor: '#F8F1E9',
@@ -120,32 +120,32 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    padding: 32,
+    padding: 24,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 56,
+    marginBottom: 48,
   },
   logo: {
-    fontSize: 72,
-    marginBottom: 20,
+    fontSize: 64,
+    marginBottom: 16,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#2D2D2D',
-    marginBottom: 12,
+    fontSize: 28,
+    fontWeight: '300',
+    color: '#1E3A8A',
+    marginBottom: 8,
     textAlign: 'center',
-    letterSpacing: 0.5,
+    fontFamily: 'Georgia',
   },
   subtitle: {
-    fontSize: 17,
+    fontSize: 16,
     color: '#5A5A5A',
     textAlign: 'center',
-    lineHeight: 26,
+    lineHeight: 24,
   },
   form: {
-    marginBottom: 40,
+    marginBottom: 32,
   },
   label: {
     fontSize: 12,
@@ -153,64 +153,63 @@ const styles = StyleSheet.create({
     color: '#5A5A5A',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   input: {
     backgroundColor: '#F9FAFB',
-    borderWidth: 2,
-    borderColor: '#E8E0D4',
+    borderWidth: 1,
+    borderColor: '#D9D0C3',
     borderRadius: 8,
-    padding: 18,
-    fontSize: 17,
+    padding: 16,
+    fontSize: 16,
     color: '#2D2D2D',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   button: {
     backgroundColor: '#D4AF37',
     borderRadius: 6,
-    padding: 18,
+    padding: 16,
     alignItems: 'center',
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#F8F1E9',
+    color: '#2D2D2D',
   },
   footer: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#5A5A5A',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 22,
   },
   iconContainer: {
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 24,
   },
   icon: {
-    fontSize: 72,
+    fontSize: 64,
   },
   email: {
     color: '#1E3A8A',
     fontWeight: '600',
   },
   hint: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#5A5A5A',
     textAlign: 'center',
-    lineHeight: 24,
-    marginTop: 20,
-    marginBottom: 40,
+    lineHeight: 22,
+    marginTop: 16,
+    marginBottom: 32,
   },
   secondaryButton: {
-    padding: 18,
+    padding: 16,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#1E3A8A',
-    fontWeight: '500',
   },
 });
