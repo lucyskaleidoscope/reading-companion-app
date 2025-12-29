@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   RefreshControl,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useStore } from '../store/useStore';
@@ -24,6 +24,15 @@ export default function HomeScreen() {
   const [preReadResults, setPreReadResults] = useState<{[chapterId: string]: PreReadResult}>({});
   const [postReadResults, setPostReadResults] = useState<{[chapterId: string]: PostReadResult}>({});
   const [chapterCards, setChapterCards] = useState<{[chapterId: string]: Card[]}>({});
+
+  // Refresh stats every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchStats();
+      fetchDueCards();
+      fetchBooks();
+    }, [])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

@@ -161,6 +161,10 @@ export const useStore = create<AppState>((set, get) => ({
         books: get().books.filter(b => b.id !== id),
         currentBook: get().currentBook?.id === id ? null : get().currentBook,
       });
+      
+      // Refresh stats
+      get().fetchStats();
+      get().fetchDueCards();
     }
   },
 
@@ -198,6 +202,10 @@ export const useStore = create<AppState>((set, get) => ({
     
     // Delete the chapter
     await supabase.from('chapters').delete().eq('id', id);
+    
+    // Refresh stats
+    get().fetchStats();
+    get().fetchDueCards();
   },
 
   // Delete pre-read result for a chapter
@@ -205,6 +213,10 @@ export const useStore = create<AppState>((set, get) => ({
     await supabase.from('preread_results').delete().eq('chapter_id', chapterId);
     // Reset chapter pre-read status
     await supabase.from('chapters').update({ preread_complete: false }).eq('id', chapterId);
+    
+    // Refresh stats
+    get().fetchStats();
+    get().fetchDueCards();
   },
 
   // Delete post-read result for a chapter (also deletes cards)
@@ -213,6 +225,10 @@ export const useStore = create<AppState>((set, get) => ({
     await supabase.from('postread_results').delete().eq('chapter_id', chapterId);
     // Reset chapter post-read status
     await supabase.from('chapters').update({ postread_complete: false, reading_complete: false }).eq('id', chapterId);
+    
+    // Refresh stats
+    get().fetchStats();
+    get().fetchDueCards();
   },
 
   // Review a card
