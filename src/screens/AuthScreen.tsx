@@ -112,9 +112,10 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
+  // Greek Education Theme
   container: {
     flex: 1,
-    backgroundColor: '#0d0d0d',
+    backgroundColor: '#F8F1E9',
   },
   content: {
     flex: 1,
@@ -132,13 +133,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '300',
-    color: '#fff',
+    color: '#1E3A8A',
     marginBottom: 8,
     textAlign: 'center',
+    fontFamily: 'Georgia',
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: '#5A5A5A',
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -148,24 +150,24 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#888',
+    color: '#5A5A5A',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#F9FAFB',
     borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 12,
+    borderColor: '#D9D0C3',
+    borderRadius: 8,
     padding: 16,
     fontSize: 16,
-    color: '#fff',
+    color: '#2D2D2D',
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#4a9eff',
-    borderRadius: 12,
+    backgroundColor: '#D4AF37',
+    borderRadius: 6,
     padding: 16,
     alignItems: 'center',
   },
@@ -175,11 +177,11 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    color: '#2D2D2D',
   },
   footer: {
     fontSize: 14,
-    color: '#666',
+    color: '#5A5A5A',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -191,12 +193,12 @@ const styles = StyleSheet.create({
     fontSize: 64,
   },
   email: {
-    color: '#4a9eff',
+    color: '#1E3A8A',
     fontWeight: '600',
   },
   hint: {
     fontSize: 14,
-    color: '#666',
+    color: '#5A5A5A',
     textAlign: 'center',
     lineHeight: 22,
     marginTop: 16,
@@ -208,6 +210,6 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontSize: 14,
-    color: '#4a9eff',
+    color: '#1E3A8A',
   },
 });
