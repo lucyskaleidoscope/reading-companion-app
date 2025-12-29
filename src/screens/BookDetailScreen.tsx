@@ -31,7 +31,7 @@ export default function BookDetailScreen() {
   const route = useRoute<RouteType>();
   const { bookId } = route.params;
   
-  const { books, updateBook, fetchChapters, createChapter, setCurrentBook, setCurrentChapter } = useStore();
+  const { books, updateBook, deleteBook, fetchChapters, createChapter, setCurrentBook, setCurrentChapter, deleteChapter } = useStore();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -97,6 +97,42 @@ export default function BookDetailScreen() {
     });
 
     setShowEditModal(false);
+  };
+
+  const handleDeleteBook = () => {
+    Alert.alert(
+      'Delete Book',
+      `Are you sure you want to delete "${book?.title}"? This will also delete all chapters, pre-read summaries, post-read summaries, and flashcards.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteBook(bookId);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
+  };
+
+  const handleDeleteChapter = (chapter: Chapter) => {
+    Alert.alert(
+      'Delete Chapter',
+      `Are you sure you want to delete "${chapter.title}"? This will also delete any pre-read, post-read, and flashcards for this chapter.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteChapter(chapter.id);
+            loadChapters();
+          },
+        },
+      ]
+    );
   };
 
   const handleChapterPress = (chapter: Chapter) => {
@@ -207,6 +243,15 @@ export default function BookDetailScreen() {
                         <Ionicons name="document-text-outline" size={18} color="#aaa" />
                       </TouchableOpacity>
                     )}
+                    <TouchableOpacity
+                      style={styles.actionIcon}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleDeleteChapter(chapter);
+                      }}
+                    >
+                      <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
+                    </TouchableOpacity>
                     <Ionicons name="chevron-forward" size={20} color="#aaa" />
                   </View>
                 </TouchableOpacity>
@@ -330,6 +375,21 @@ export default function BookDetailScreen() {
                 ))}
               </View>
             </View>
+
+            {/* Delete Book Section */}
+            <View style={styles.dangerZone}>
+              <Text style={styles.dangerLabel}>Danger Zone</Text>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => {
+                  setShowEditModal(false);
+                  handleDeleteBook();
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
+                <Text style={styles.deleteButtonText}>Delete Book</Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
       </Modal>
@@ -393,4 +453,8 @@ const styles = StyleSheet.create({
   goalTypeIcon: { fontSize: 16 },
   goalTypeLabel: { fontSize: 14, color: '#bbb' },
   goalTypeLabelSelected: { color: '#fff' },
+  dangerZone: { marginTop: 40, paddingTop: 20, borderTopWidth: 1, borderTopColor: '#333' },
+  dangerLabel: { fontSize: 12, fontWeight: '600', color: '#ff6b6b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 },
+  deleteButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#2a1a1a', borderWidth: 1, borderColor: '#ff6b6b', borderRadius: 12, padding: 16, gap: 8 },
+  deleteButtonText: { fontSize: 16, fontWeight: '600', color: '#ff6b6b' },
 });

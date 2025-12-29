@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,7 +22,7 @@ export default function PreReadResultScreen() {
   const route = useRoute<RouteType>();
   const { chapterId } = route.params;
   
-  const { currentBook, updateChapter } = useStore();
+  const { currentBook, updateChapter, deletePreReadResult } = useStore();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [result, setResult] = useState<PreReadResult | null>(null);
 
@@ -50,6 +51,24 @@ export default function PreReadResultScreen() {
   const handleReadyToRead = async () => {
     await updateChapter(chapterId, { reading_complete: false });
     navigation.navigate('Main' as any);
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Pre-Read',
+      'Are you sure you want to delete this pre-read summary? You can regenerate it later.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deletePreReadResult(chapterId);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
   };
 
   if (!result) return null;
@@ -120,6 +139,12 @@ export default function PreReadResultScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+        >
+          <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={() => navigation.goBack()}
@@ -259,6 +284,14 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: '#252525',
+  },
+  deleteButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ff6b6b',
+    backgroundColor: '#2a1a1a',
   },
   secondaryButton: {
     paddingVertical: 14,

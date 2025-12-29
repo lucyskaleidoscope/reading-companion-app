@@ -25,7 +25,7 @@ export default function PostReadResultScreen() {
   const route = useRoute<RouteType>();
   const { chapterId } = route.params;
   
-  const { currentBook } = useStore();
+  const { currentBook, deletePostReadResult } = useStore();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [result, setResult] = useState<PostReadResult | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
@@ -135,6 +135,24 @@ export default function PostReadResultScreen() {
       setCurrentCardIndex(currentCardIndex - 1);
       setIsFlipped(false);
     }
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Post-Read',
+      'Are you sure you want to delete this post-read summary and all flashcards? You can regenerate them later.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deletePostReadResult(chapterId);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
   };
 
   if (!result) return null;
@@ -288,6 +306,12 @@ export default function PostReadResultScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+        >
+          <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.doneButton}
           onPress={() => navigation.navigate('Main' as any)}
@@ -525,8 +549,19 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopWidth: 1,
     borderTopColor: '#252525',
+    flexDirection: 'row',
+    gap: 12,
+  },
+  deleteButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ff6b6b',
+    backgroundColor: '#2a1a1a',
   },
   doneButton: {
+    flex: 1,
     backgroundColor: '#4a9eff',
     borderRadius: 12,
     paddingVertical: 14,
