@@ -260,7 +260,7 @@ function BookCard({ book, onPress, onDelete }: {
         </View>
       </View>
       <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
-        <Ionicons name="trash-outline" size={20} color="#666" />
+        <Ionicons name="trash-outline" size={20} color="#ff6b6b" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   progressContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   progressBar: { flex: 1, height: 4, backgroundColor: '#333', borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: '#4a9eff' },
-  progressText: { fontSize: 12, color: '#666', width: 36 },
+  progressText: { fontSize: 12, color: '#888', width: 36 },
   deleteButton: { padding: 8, marginLeft: 8 },
   emptyState: { alignItems: 'center', padding: 40 },
   emptyEmoji: { fontSize: 64, marginBottom: 16 },
