@@ -58,7 +58,7 @@ export default function PostReadScreen() {
 
   const handleProcess = async () => {
     if (!chapter?.source_text || !currentBook) {
-      Alert.alert('Error', 'Chapter text not found');
+      window.alert('Chapter text not found. Please go back and add chapter text first.');
       return;
     }
 
@@ -118,8 +118,8 @@ export default function PostReadScreen() {
       navigation.replace('PostReadResult', { chapterId });
 
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to process. Please try again.');
+      console.error('Post-read error:', error);
+      window.alert('Failed to process. Please try again. Error: ' + (error as Error).message);
     } finally {
       setIsProcessing(false);
     }
