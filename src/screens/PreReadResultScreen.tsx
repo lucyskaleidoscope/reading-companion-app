@@ -49,7 +49,7 @@ export default function PreReadResultScreen() {
 
   const handleReadyToRead = async () => {
     await updateChapter(chapterId, { reading_complete: false });
-    navigation.navigate('Main' as any);
+    navigation.goBack();
   };
 
   const handleDelete = () => {
@@ -64,7 +64,6 @@ export default function PreReadResultScreen() {
   };
 
   const handlePrint = () => {
-    // Create a printable HTML document
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -196,16 +195,18 @@ export default function PreReadResultScreen() {
       </html>
     `;
 
-    // Open print window
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(printContent);
       printWindow.document.close();
-      printWindow.focus();
-      // Small delay to ensure content is loaded
-      setTimeout(() => {
+      printWindow.onload = () => {
+        printWindow.focus();
         printWindow.print();
-      }, 250);
+      };
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 500);
     }
   };
 
@@ -214,19 +215,16 @@ export default function PreReadResultScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        {/* Book Banner */}
         <View style={styles.banner}>
           <Text style={styles.bookTitle}>{currentBook?.title}</Text>
           <Text style={styles.chapterTitle}>{chapter?.title}</Text>
         </View>
 
-        {/* Overview */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Overview</Text>
           <Text style={styles.overview}>{result.chapter_overview}</Text>
         </View>
 
-        {/* Key Concepts */}
         {result.key_concepts?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Key Concepts to Watch For</Text>
@@ -243,7 +241,6 @@ export default function PreReadResultScreen() {
           </View>
         )}
 
-        {/* Questions */}
         {result.questions_to_hold?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Questions to Hold in Mind</Text>
@@ -256,7 +253,6 @@ export default function PreReadResultScreen() {
           </View>
         )}
 
-        {/* Structure */}
         {result.structure_map && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Chapter Structure</Text>
@@ -266,7 +262,6 @@ export default function PreReadResultScreen() {
           </View>
         )}
 
-        {/* Connections */}
         {result.connections && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Connections</Text>
@@ -275,30 +270,14 @@ export default function PreReadResultScreen() {
         )}
       </ScrollView>
 
-      {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={handleDelete}
-        >
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
           <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.printButton}
-          onPress={handlePrint}
-        >
+        <TouchableOpacity style={styles.printButton} onPress={handlePrint}>
           <Ionicons name="print-outline" size={18} color="#4a9eff" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.secondaryButtonText}>Back</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={handleReadyToRead}
-        >
+        <TouchableOpacity style={styles.primaryButton} onPress={handleReadyToRead}>
           <Ionicons name="checkmark" size={20} color="#000" />
           <Text style={styles.primaryButtonText}>Got It — I'll Read Now</Text>
         </TouchableOpacity>
@@ -444,17 +423,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#4a9eff',
     backgroundColor: '#1a2a3a',
-  },
-  secondaryButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  secondaryButtonText: {
-    fontSize: 15,
-    color: '#888',
   },
   primaryButton: {
     flex: 1,
