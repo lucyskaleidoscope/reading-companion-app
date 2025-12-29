@@ -21,7 +21,7 @@ export default function PreReadResultScreen() {
   const route = useRoute<RouteType>();
   const { chapterId } = route.params;
   
-  const { currentBook, updateChapter } = useStore();
+  const { currentBook, updateChapter, deletePreReadResult } = useStore();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [result, setResult] = useState<PreReadResult | null>(null);
 
@@ -50,6 +50,163 @@ export default function PreReadResultScreen() {
   const handleReadyToRead = async () => {
     await updateChapter(chapterId, { reading_complete: false });
     navigation.navigate('Main' as any);
+  };
+
+  const handleDelete = () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this pre-read summary? You can regenerate it later.'
+    );
+    if (confirmed) {
+      deletePreReadResult(chapterId).then(() => {
+        navigation.goBack();
+      });
+    }
+  };
+
+  const handlePrint = () => {
+    // Create a printable HTML document
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Pre-Read Briefing - ${chapter?.title || 'Chapter'}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+          }
+          .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+          }
+          .book-title { font-size: 14px; color: #666; margin-bottom: 4px; }
+          .chapter-title { font-size: 24px; font-weight: 600; }
+          .section { margin-bottom: 28px; }
+          .section-title { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+          }
+          .overview { font-size: 16px; line-height: 1.7; }
+          .concept-card {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #4a9eff;
+          }
+          .concept-term { font-size: 17px; font-weight: 600; color: #2563eb; margin-bottom: 6px; }
+          .concept-preview { font-size: 15px; color: #444; margin-bottom: 10px; }
+          .watch-for { 
+            background: #e8e8e8; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-size: 13px;
+          }
+          .watch-for-label { font-weight: 600; color: #2563eb; }
+          .question-card {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 4px solid #4a9eff;
+          }
+          .question-text { font-size: 15px; }
+          .structure-card {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 16px;
+            white-space: pre-wrap;
+          }
+          .structure-text { font-size: 15px; }
+          .connections { font-style: italic; color: #555; }
+          @media print {
+            body { padding: 20px; }
+            .concept-card, .question-card, .structure-card { 
+              break-inside: avoid; 
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="book-title">${currentBook?.title || ''}</div>
+          <div class="chapter-title">${chapter?.title || ''} — Pre-Read Briefing</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Overview</div>
+          <div class="overview">${result?.chapter_overview || ''}</div>
+        </div>
+
+        ${result?.key_concepts?.length ? `
+          <div class="section">
+            <div class="section-title">Key Concepts to Watch For</div>
+            ${result.key_concepts.map(concept => `
+              <div class="concept-card">
+                <div class="concept-term">${concept.term}</div>
+                <div class="concept-preview">${concept.preview}</div>
+                <div class="watch-for">
+                  <span class="watch-for-label">Watch for: </span>
+                  <span>${concept.watch_for}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${result?.questions_to_hold?.length ? `
+          <div class="section">
+            <div class="section-title">Questions to Hold in Mind</div>
+            ${result.questions_to_hold.map(question => `
+              <div class="question-card">
+                <div class="question-text">• ${question}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${result?.structure_map ? `
+          <div class="section">
+            <div class="section-title">Chapter Structure</div>
+            <div class="structure-card">
+              <div class="structure-text">${result.structure_map}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${result?.connections ? `
+          <div class="section">
+            <div class="section-title">Connections</div>
+            <div class="connections">${result.connections}</div>
+          </div>
+        ` : ''}
+      </body>
+      </html>
+    `;
+
+    // Open print window
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+      // Small delay to ensure content is loaded
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
   };
 
   if (!result) return null;
@@ -120,6 +277,18 @@ export default function PreReadResultScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+        >
+          <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.printButton}
+          onPress={handlePrint}
+        >
+          <Ionicons name="print-outline" size={18} color="#4a9eff" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={() => navigation.goBack()}
@@ -259,6 +428,22 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: '#252525',
+  },
+  deleteButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ff6b6b',
+    backgroundColor: '#2a1a1a',
+  },
+  printButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#4a9eff',
+    backgroundColor: '#1a2a3a',
   },
   secondaryButton: {
     paddingVertical: 14,
