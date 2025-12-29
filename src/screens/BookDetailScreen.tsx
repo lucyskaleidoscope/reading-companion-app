@@ -100,39 +100,25 @@ export default function BookDetailScreen() {
   };
 
   const handleDeleteBook = () => {
-    Alert.alert(
-      'Delete Book',
-      `Are you sure you want to delete "${book?.title}"? This will also delete all chapters, pre-read summaries, post-read summaries, and flashcards.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await deleteBook(bookId);
-            navigation.goBack();
-          },
-        },
-      ]
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${book?.title}"? This will also delete all chapters, pre-read summaries, post-read summaries, and flashcards.`
     );
+    if (confirmed) {
+      deleteBook(bookId).then(() => {
+        navigation.goBack();
+      });
+    }
   };
 
   const handleDeleteChapter = (chapter: Chapter) => {
-    Alert.alert(
-      'Delete Chapter',
-      `Are you sure you want to delete "${chapter.title}"? This will also delete any pre-read, post-read, and flashcards for this chapter.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await deleteChapter(chapter.id);
-            loadChapters();
-          },
-        },
-      ]
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${chapter.title}"? This will also delete any pre-read, post-read, and flashcards for this chapter.`
     );
+    if (confirmed) {
+      deleteChapter(chapter.id).then(() => {
+        loadChapters();
+      });
+    }
   };
 
   const handleChapterPress = (chapter: Chapter) => {

@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -54,21 +53,14 @@ export default function PreReadResultScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      'Delete Pre-Read',
-      'Are you sure you want to delete this pre-read summary? You can regenerate it later.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await deletePreReadResult(chapterId);
-            navigation.goBack();
-          },
-        },
-      ]
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this pre-read summary? You can regenerate it later.'
     );
+    if (confirmed) {
+      deletePreReadResult(chapterId).then(() => {
+        navigation.goBack();
+      });
+    }
   };
 
   if (!result) return null;

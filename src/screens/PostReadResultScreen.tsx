@@ -138,21 +138,14 @@ export default function PostReadResultScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      'Delete Post-Read',
-      'Are you sure you want to delete this post-read summary and all flashcards? You can regenerate them later.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await deletePostReadResult(chapterId);
-            navigation.goBack();
-          },
-        },
-      ]
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this post-read summary and all flashcards? You can regenerate them later.'
     );
+    if (confirmed) {
+      deletePostReadResult(chapterId).then(() => {
+        navigation.goBack();
+      });
+    }
   };
 
   if (!result) return null;
