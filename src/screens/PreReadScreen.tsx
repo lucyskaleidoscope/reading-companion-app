@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  Platform,
 } from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,9 +36,6 @@ export default function PreReadScreen() {
   const [url, setUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [fileName, setFileName] = useState('');
-  
-  // Hidden file input ref for web
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     loadChapter();
@@ -59,33 +57,26 @@ export default function PreReadScreen() {
   };
 
   const handleFilePick = async () => {
-    if (Platform.OS === 'web') {
-      // On web, trigger the hidden file input
-      fileInputRef.current?.click();
-    } else {
-      // On native, show message that file picking is not available in web build
-      Alert.alert('File Upload', 'Please use the Paste tab to input your chapter text.');
-    }
-  };
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['text/plain', 'application/pdf'],
+        copyToCacheDirectory: true,
+      });
 
-  const handleWebFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+      if (result.canceled) return;
 
-    setFileName(file.name);
+      const file = result.assets[0];
+      setFileName(file.name);
 
-    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
+      if (file.mimeType === 'text/plain') {
+        const content = await FileSystem.readAsStringAsync(file.uri);
         setText(content);
-      };
-      reader.onerror = () => {
-        Alert.alert('Error', 'Failed to read file');
-      };
-      reader.readAsText(file);
-    } else {
-      Alert.alert('Unsupported File', 'Please upload a .txt file or paste your text directly.');
+      } else {
+        // For PDF, we'd need a PDF parser library
+        Alert.alert('PDF Support', 'PDF parsing coming soon. Please paste text for now.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to read file');
     }
   };
 
@@ -147,17 +138,6 @@ export default function PreReadScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Hidden file input for web */}
-      {Platform.OS === 'web' && (
-        <input
-          type="file"
-          ref={fileInputRef as any}
-          style={{ display: 'none' }}
-          accept=".txt,text/plain"
-          onChange={handleWebFileChange as any}
-        />
-      )}
-
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>

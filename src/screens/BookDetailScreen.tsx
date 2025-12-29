@@ -31,7 +31,7 @@ export default function BookDetailScreen() {
   const route = useRoute<RouteType>();
   const { bookId } = route.params;
   
-  const { books, updateBook, deleteBook, fetchChapters, createChapter, setCurrentBook, setCurrentChapter, deleteChapter } = useStore();
+  const { books, updateBook, fetchChapters, createChapter, setCurrentBook, setCurrentChapter } = useStore();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -97,28 +97,6 @@ export default function BookDetailScreen() {
     });
 
     setShowEditModal(false);
-  };
-
-  const handleDeleteBook = () => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${book?.title}"? This will also delete all chapters, pre-read summaries, post-read summaries, and flashcards.`
-    );
-    if (confirmed) {
-      deleteBook(bookId).then(() => {
-        navigation.goBack();
-      });
-    }
-  };
-
-  const handleDeleteChapter = (chapter: Chapter) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${chapter.title}"? This will also delete any pre-read, post-read, and flashcards for this chapter.`
-    );
-    if (confirmed) {
-      deleteChapter(chapter.id).then(() => {
-        loadChapters();
-      });
-    }
   };
 
   const handleChapterPress = (chapter: Chapter) => {
@@ -229,15 +207,6 @@ export default function BookDetailScreen() {
                         <Ionicons name="document-text-outline" size={18} color="#aaa" />
                       </TouchableOpacity>
                     )}
-                    <TouchableOpacity
-                      style={styles.actionIcon}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        handleDeleteChapter(chapter);
-                      }}
-                    >
-                      <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
-                    </TouchableOpacity>
                     <Ionicons name="chevron-forward" size={20} color="#aaa" />
                   </View>
                 </TouchableOpacity>
@@ -361,21 +330,6 @@ export default function BookDetailScreen() {
                 ))}
               </View>
             </View>
-
-            {/* Delete Book Section */}
-            <View style={styles.dangerZone}>
-              <Text style={styles.dangerLabel}>Danger Zone</Text>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => {
-                  setShowEditModal(false);
-                  handleDeleteBook();
-                }}
-              >
-                <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
-                <Text style={styles.deleteButtonText}>Delete Book</Text>
-              </TouchableOpacity>
-            </View>
           </ScrollView>
         </View>
       </Modal>
@@ -384,64 +338,59 @@ export default function BookDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Greek Education Theme
-  container: { flex: 1, backgroundColor: '#F8F1E9' },
+  container: { flex: 1, backgroundColor: '#0d0d0d' },
   scrollView: { flex: 1 },
   content: { padding: 20 },
   header: { alignItems: 'center', marginBottom: 24 },
-  bookIcon: { width: 80, height: 80, borderRadius: 16, backgroundColor: '#EDE4D8', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  bookIcon: { width: 80, height: 80, borderRadius: 16, backgroundColor: '#1a1a1a', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   bookEmoji: { fontSize: 40 },
-  title: { fontSize: 24, fontWeight: '600', color: '#1E3A8A', textAlign: 'center', marginBottom: 4, fontFamily: 'Georgia' },
-  author: { fontSize: 16, color: '#5A5A5A', marginBottom: 2 },
-  domain: { fontSize: 14, color: '#8A8A8A', marginBottom: 12 },
-  editButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6, borderWidth: 1, borderColor: '#1E3A8A' },
-  editButtonText: { fontSize: 14, color: '#1E3A8A' },
-  progressCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#D9D0C3', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  title: { fontSize: 24, fontWeight: '600', color: '#fff', textAlign: 'center', marginBottom: 4 },
+  author: { fontSize: 16, color: '#bbb', marginBottom: 2 },
+  domain: { fontSize: 14, color: '#aaa', marginBottom: 12 },
+  editButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#4a9eff' },
+  editButtonText: { fontSize: 14, color: '#4a9eff' },
+  progressCard: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#252525' },
   progressHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  progressLabel: { fontSize: 14, color: '#5A5A5A' },
-  progressPercent: { fontSize: 14, fontWeight: '600', color: '#D4AF37' },
-  progressBar: { height: 6, backgroundColor: '#D9D0C3', borderRadius: 3, overflow: 'hidden', marginBottom: 8 },
-  progressFill: { height: '100%', backgroundColor: '#D4AF37' },
-  progressDetail: { fontSize: 12, color: '#8A8A8A' },
-  goalCard: { backgroundColor: '#E8EEF8', borderRadius: 8, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: '#C5D1E0', borderLeftWidth: 3, borderLeftColor: '#1E3A8A' },
-  goalLabel: { fontSize: 12, fontWeight: '600', color: '#1E3A8A', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
-  goalText: { fontSize: 15, color: '#2D2D2D', lineHeight: 22 },
+  progressLabel: { fontSize: 14, color: '#bbb' },
+  progressPercent: { fontSize: 14, fontWeight: '600', color: '#4a9eff' },
+  progressBar: { height: 6, backgroundColor: '#333', borderRadius: 3, overflow: 'hidden', marginBottom: 8 },
+  progressFill: { height: '100%', backgroundColor: '#4a9eff' },
+  progressDetail: { fontSize: 12, color: '#aaa' },
+  goalCard: { backgroundColor: '#1a2a3a', borderRadius: 12, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: '#2a4a5a' },
+  goalLabel: { fontSize: 12, fontWeight: '600', color: '#4a9eff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
+  goalText: { fontSize: 15, color: '#ccc', lineHeight: 22 },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1E3A8A' },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#fff' },
   addChapterButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  addChapterText: { fontSize: 14, color: '#D4AF37' },
-  chapterCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: '#D9D0C3', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
-  chapterNumber: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#EDE4D8', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  chapterNumberText: { fontSize: 14, fontWeight: '600', color: '#5A5A5A' },
+  addChapterText: { fontSize: 14, color: '#4a9eff' },
+  chapterCard: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: '#252525' },
+  chapterNumber: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#252525', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  chapterNumberText: { fontSize: 14, fontWeight: '600', color: '#bbb' },
   chapterInfo: { flex: 1 },
-  chapterTitle: { fontSize: 16, fontWeight: '500', color: '#2D2D2D', marginBottom: 4 },
+  chapterTitle: { fontSize: 16, fontWeight: '500', color: '#fff', marginBottom: 4 },
   chapterMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
   statusText: { fontSize: 13 },
   chapterActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   actionIcon: { padding: 4 },
-  emptyChapters: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 32, alignItems: 'center', borderWidth: 1, borderColor: '#D9D0C3' },
-  emptyText: { fontSize: 16, color: '#5A5A5A', marginBottom: 4 },
-  emptyHint: { fontSize: 14, color: '#8A8A8A', textAlign: 'center' },
-  modalContainer: { flex: 1, backgroundColor: '#F8F1E9' },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#D9D0C3' },
-  modalCancel: { fontSize: 16, color: '#5A5A5A' },
-  modalTitle: { fontSize: 18, fontWeight: '600', color: '#1E3A8A' },
-  modalSave: { fontSize: 16, fontWeight: '600', color: '#D4AF37' },
+  emptyChapters: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 32, alignItems: 'center', borderWidth: 1, borderColor: '#252525' },
+  emptyText: { fontSize: 16, color: '#bbb', marginBottom: 4 },
+  emptyHint: { fontSize: 14, color: '#aaa', textAlign: 'center' },
+  modalContainer: { flex: 1, backgroundColor: '#0d0d0d' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#252525' },
+  modalCancel: { fontSize: 16, color: '#bbb' },
+  modalTitle: { fontSize: 18, fontWeight: '600', color: '#fff' },
+  modalSave: { fontSize: 16, fontWeight: '600', color: '#4a9eff' },
   modalContent: { flex: 1, padding: 20 },
   inputGroup: { marginBottom: 20 },
-  label: { fontSize: 12, fontWeight: '600', color: '#5A5A5A', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
-  input: { backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#D9D0C3', borderRadius: 8, padding: 16, fontSize: 16, color: '#2D2D2D' },
+  label: { fontSize: 12, fontWeight: '600', color: '#bbb', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
+  input: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#333', borderRadius: 12, padding: 16, fontSize: 16, color: '#fff' },
   textArea: { height: 100, textAlignVertical: 'top' },
   goalTypes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  goalType: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#D9D0C3', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 14, gap: 6 },
-  goalTypeSelected: { borderColor: '#1E3A8A', backgroundColor: '#E8EEF8' },
+  goalType: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#333', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 14, gap: 6 },
+  goalTypeSelected: { borderColor: '#4a9eff', backgroundColor: '#1a2a3a' },
   goalTypeIcon: { fontSize: 16 },
-  goalTypeLabel: { fontSize: 14, color: '#5A5A5A' },
-  goalTypeLabelSelected: { color: '#1E3A8A' },
-  dangerZone: { marginTop: 40, paddingTop: 20, borderTopWidth: 1, borderTopColor: '#D9D0C3' },
-  dangerLabel: { fontSize: 12, fontWeight: '600', color: '#A63D3D', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 },
-  deleteButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDF2F2', borderWidth: 1, borderColor: '#A63D3D', borderRadius: 6, padding: 16, gap: 8 },
-  deleteButtonText: { fontSize: 16, fontWeight: '600', color: '#A63D3D' },
+  goalTypeLabel: { fontSize: 14, color: '#bbb' },
+  goalTypeLabelSelected: { color: '#fff' },
 });

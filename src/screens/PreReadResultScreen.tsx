@@ -21,7 +21,7 @@ export default function PreReadResultScreen() {
   const route = useRoute<RouteType>();
   const { chapterId } = route.params;
   
-  const { currentBook, updateChapter, deletePreReadResult } = useStore();
+  const { currentBook, updateChapter } = useStore();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [result, setResult] = useState<PreReadResult | null>(null);
 
@@ -50,17 +50,6 @@ export default function PreReadResultScreen() {
   const handleReadyToRead = async () => {
     await updateChapter(chapterId, { reading_complete: false });
     navigation.navigate('Main' as any);
-  };
-
-  const handleDelete = () => {
-    const confirmed = window.confirm(
-      'Are you sure you want to delete this pre-read summary? You can regenerate it later.'
-    );
-    if (confirmed) {
-      deletePreReadResult(chapterId).then(() => {
-        navigation.goBack();
-      });
-    }
   };
 
   if (!result) return null;
@@ -131,12 +120,6 @@ export default function PreReadResultScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={handleDelete}
-        >
-          <Ionicons name="trash-outline" size={18} color="#ff6b6b" />
-        </TouchableOpacity>
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={() => navigation.goBack()}
@@ -276,14 +259,6 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: '#252525',
-  },
-  deleteButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#ff6b6b',
-    backgroundColor: '#2a1a1a',
   },
   secondaryButton: {
     paddingVertical: 14,

@@ -36,11 +36,6 @@ interface AppState {
   setCurrentChapter: (chapter: Chapter | null) => void;
   createChapter: (chapter: Partial<Chapter>) => Promise<Chapter | null>;
   updateChapter: (id: string, updates: Partial<Chapter>) => Promise<void>;
-  deleteChapter: (id: string) => Promise<void>;
-  
-  // Result actions
-  deletePreReadResult: (chapterId: string) => Promise<void>;
-  deletePostReadResult: (chapterId: string) => Promise<void>;
   
   // Card actions
   reviewCard: (cardId: string, rating: 'again' | 'hard' | 'good' | 'easy') => Promise<void>;
@@ -161,10 +156,6 @@ export const useStore = create<AppState>((set, get) => ({
         books: get().books.filter(b => b.id !== id),
         currentBook: get().currentBook?.id === id ? null : get().currentBook,
       });
-      
-      // Refresh stats
-      get().fetchStats();
-      get().fetchDueCards();
     }
   },
 
@@ -191,44 +182,6 @@ export const useStore = create<AppState>((set, get) => ({
       .from('chapters')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id);
-  },
-
-  // Delete a chapter (also deletes related pre-read, post-read, and cards)
-  deleteChapter: async (id) => {
-    // Delete related data first (cascade)
-    await supabase.from('cards').delete().eq('chapter_id', id);
-    await supabase.from('postread_results').delete().eq('chapter_id', id);
-    await supabase.from('preread_results').delete().eq('chapter_id', id);
-    
-    // Delete the chapter
-    await supabase.from('chapters').delete().eq('id', id);
-    
-    // Refresh stats
-    get().fetchStats();
-    get().fetchDueCards();
-  },
-
-  // Delete pre-read result for a chapter
-  deletePreReadResult: async (chapterId) => {
-    await supabase.from('preread_results').delete().eq('chapter_id', chapterId);
-    // Reset chapter pre-read status
-    await supabase.from('chapters').update({ preread_complete: false }).eq('id', chapterId);
-    
-    // Refresh stats
-    get().fetchStats();
-    get().fetchDueCards();
-  },
-
-  // Delete post-read result for a chapter (also deletes cards)
-  deletePostReadResult: async (chapterId) => {
-    await supabase.from('cards').delete().eq('chapter_id', chapterId);
-    await supabase.from('postread_results').delete().eq('chapter_id', chapterId);
-    // Reset chapter post-read status
-    await supabase.from('chapters').update({ postread_complete: false, reading_complete: false }).eq('id', chapterId);
-    
-    // Refresh stats
-    get().fetchStats();
-    get().fetchDueCards();
   },
 
   // Review a card
