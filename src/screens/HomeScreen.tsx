@@ -157,7 +157,7 @@ export default function HomeScreen() {
               style={styles.reviewButton}
               onPress={() => navigation.navigate('Main', { screen: 'Review' } as any)}
             >
-              <Ionicons name="flash" size={20} color="#000" />
+              <Ionicons name="flash" size={20} color="#F8F1E9" />
               <Text style={styles.reviewButtonText}>Start Review Session</Text>
             </TouchableOpacity>
           )}
@@ -281,21 +281,21 @@ export default function HomeScreen() {
               style={styles.actionCard}
               onPress={() => navigation.navigate('Main', { screen: 'Library' } as any)}
             >
-              <Ionicons name="add-circle-outline" size={32} color="#4a9eff" />
+              <Ionicons name="add-circle-outline" size={32} color="#1E3A8A" />
               <Text style={styles.actionLabel}>New Book</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionCard}
               onPress={() => navigation.navigate('Main', { screen: 'Review' } as any)}
             >
-              <Ionicons name="flash-outline" size={32} color="#4ade80" />
+              <Ionicons name="flash-outline" size={32} color="#D4AF37" />
               <Text style={styles.actionLabel}>Review</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionCard}
               onPress={() => navigation.navigate('Main', { screen: 'Library' } as any)}
             >
-              <Ionicons name="library-outline" size={32} color="#f59e0b" />
+              <Ionicons name="library-outline" size={32} color="#3D7C47" />
               <Text style={styles.actionLabel}>Library</Text>
             </TouchableOpacity>
           </View>
@@ -329,50 +329,51 @@ function getGreeting() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d0d0d' },
+  // Tech-Education Theme - Warm parchment with modern sans-serif
+  container: { flex: 1, backgroundColor: '#F8F1E9' },
   scrollView: { flex: 1 },
-  content: { padding: 20, paddingTop: 60 },
-  header: { marginBottom: 24 },
-  greeting: { fontSize: 28, fontWeight: '300', color: '#fff', marginBottom: 4 },
-  date: { fontSize: 14, color: '#aaa' },
-  statsCard: { backgroundColor: '#1a1a1a', borderRadius: 16, padding: 20, marginBottom: 24, borderWidth: 1, borderColor: '#252525' },
-  statRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 16 },
+  content: { padding: 24, paddingTop: 60 },
+  header: { marginBottom: 32 },
+  greeting: { fontSize: 32, fontWeight: '700', color: '#2D2D2D', marginBottom: 4, letterSpacing: 0.5 },
+  date: { fontSize: 14, color: '#5A5A5A', textTransform: 'uppercase', letterSpacing: 1 },
+  statsCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 24, marginBottom: 32, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  statRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 },
   stat: { alignItems: 'center' },
-  statNumber: { fontSize: 32, fontWeight: '600', color: '#fff' },
-  statLabel: { fontSize: 12, color: '#aaa', marginTop: 4 },
-  statDivider: { width: 1, backgroundColor: '#333' },
-  reviewButton: { backgroundColor: '#4a9eff', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  reviewButtonText: { fontSize: 16, fontWeight: '600', color: '#000' },
-  section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#fff', marginBottom: 12 },
+  statNumber: { fontSize: 36, fontWeight: '700', color: '#1E3A8A' },
+  statLabel: { fontSize: 12, color: '#5A5A5A', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
+  statDivider: { width: 1, backgroundColor: '#E8E0D4' },
+  reviewButton: { backgroundColor: '#D4AF37', borderRadius: 6, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  reviewButtonText: { fontSize: 16, fontWeight: '600', color: '#F8F1E9' },
+  section: { marginBottom: 32 },
+  sectionTitle: { fontSize: 20, fontWeight: '700', color: '#2D2D2D', marginBottom: 16, letterSpacing: 0.3 },
   bookContainer: { marginBottom: 16 },
-  bookCard: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#252525' },
-  bookIcon: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#252525', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  bookEmoji: { fontSize: 24 },
+  bookCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 20, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  bookIcon: { width: 56, height: 56, borderRadius: 8, backgroundColor: '#E8EEF8', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  bookEmoji: { fontSize: 28 },
   bookInfo: { flex: 1 },
-  bookTitle: { fontSize: 16, fontWeight: '600', color: '#fff', marginBottom: 2 },
-  bookAuthor: { fontSize: 14, color: '#bbb', marginBottom: 8 },
-  progressBar: { height: 4, backgroundColor: '#333', borderRadius: 2, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#4a9eff' },
-  preReadCard: { backgroundColor: '#1a2a3a', borderRadius: 12, padding: 14, marginTop: 8, borderWidth: 1, borderColor: '#2a4a5a' },
-  postReadCard: { backgroundColor: '#1a2a1a', borderRadius: 12, padding: 14, marginTop: 8, borderWidth: 1, borderColor: '#2a4a2a' },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  cardHeaderText: { fontSize: 13, fontWeight: '600', color: '#4a9eff' },
-  postReadHeaderText: { fontSize: 13, fontWeight: '600', color: '#4ade80' },
-  cardOverview: { fontSize: 14, color: '#ccc', lineHeight: 20, marginBottom: 8 },
+  bookTitle: { fontSize: 17, fontWeight: '600', color: '#2D2D2D', marginBottom: 4 },
+  bookAuthor: { fontSize: 14, color: '#5A5A5A', marginBottom: 10 },
+  progressBar: { height: 6, backgroundColor: '#E8E0D4', borderRadius: 3, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: '#1E3A8A' },
+  preReadCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 16, marginTop: 12, borderLeftWidth: 4, borderLeftColor: '#1E3A8A', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  postReadCard: { backgroundColor: '#F9FAFB', borderRadius: 8, padding: 16, marginTop: 12, borderLeftWidth: 4, borderLeftColor: '#D4AF37', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  cardHeaderText: { fontSize: 13, fontWeight: '600', color: '#1E3A8A', textTransform: 'uppercase', letterSpacing: 0.5 },
+  postReadHeaderText: { fontSize: 13, fontWeight: '600', color: '#D4AF37', textTransform: 'uppercase', letterSpacing: 0.5 },
+  cardOverview: { fontSize: 15, color: '#2D2D2D', lineHeight: 22, marginBottom: 10 },
   questionsPreview: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
-  questionsLabel: { fontSize: 12, color: '#4a9eff', fontWeight: '600' },
-  questionText: { fontSize: 12, color: '#aaa', flex: 1 },
-  quickLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 4 },
-  quickLink: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  quickLinkText: { fontSize: 12, color: '#bbb' },
-  actionsRow: { flexDirection: 'row', gap: 12 },
-  actionCard: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: '#252525' },
-  actionLabel: { fontSize: 14, color: '#bbb', marginTop: 8 },
-  emptyState: { alignItems: 'center', padding: 40 },
-  emptyEmoji: { fontSize: 64, marginBottom: 16 },
-  emptyTitle: { fontSize: 20, fontWeight: '600', color: '#fff', marginBottom: 8 },
-  emptyText: { fontSize: 14, color: '#bbb', textAlign: 'center', lineHeight: 22, marginBottom: 24 },
-  emptyButton: { backgroundColor: '#4a9eff', borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 },
-  emptyButtonText: { fontSize: 16, fontWeight: '600', color: '#000' },
+  questionsLabel: { fontSize: 12, color: '#1E3A8A', fontWeight: '600' },
+  questionText: { fontSize: 12, color: '#5A5A5A', flex: 1 },
+  quickLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, marginTop: 8 },
+  quickLink: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  quickLinkText: { fontSize: 13, color: '#5A5A5A' },
+  actionsRow: { flexDirection: 'row', gap: 16 },
+  actionCard: { flex: 1, backgroundColor: '#F9FAFB', borderRadius: 8, padding: 24, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 4 },
+  actionLabel: { fontSize: 14, fontWeight: '500', color: '#5A5A5A', marginTop: 12 },
+  emptyState: { alignItems: 'center', padding: 48 },
+  emptyEmoji: { fontSize: 72, marginBottom: 20 },
+  emptyTitle: { fontSize: 24, fontWeight: '700', color: '#2D2D2D', marginBottom: 12 },
+  emptyText: { fontSize: 16, color: '#5A5A5A', textAlign: 'center', lineHeight: 24, marginBottom: 32 },
+  emptyButton: { backgroundColor: '#D4AF37', borderRadius: 6, paddingVertical: 16, paddingHorizontal: 32 },
+  emptyButtonText: { fontSize: 16, fontWeight: '600', color: '#F8F1E9' },
 });
